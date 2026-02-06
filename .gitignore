@@ -1,0 +1,28 @@
+# Data files (large)
+data/raw/*.parquet
+data/processed/*.parquet
+data/audit/*.parquet
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Outputs (optional - remove if you want to commit)
+# outputs/figures/*.png
