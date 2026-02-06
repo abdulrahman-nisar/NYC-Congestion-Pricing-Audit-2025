@@ -1,7 +1,3 @@
-"""
-Interactive Streamlit Dashboard
-NYC Congestion Pricing Audit 2025
-"""
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -10,18 +6,15 @@ from PIL import Image
 import os
 from src.config import OUTPUT_FIGURES, DATA_PROCESSED
 
-# Page config
 st.set_page_config(
     page_title="NYC Congestion Audit 2025",
     page_icon="🚖",
     layout="wide"
 )
 
-# Title
 st.title("🚖 NYC Congestion Pricing Audit 2025")
 st.markdown("**Interactive Dashboard** | Data-Driven Policy Analysis")
 
-# Load summary statistics
 try:
     summary_df = pd.read_csv(os.path.join(DATA_PROCESSED, 'summary_statistics.csv'))
     summary = summary_df.iloc[0]
@@ -29,14 +22,12 @@ except:
     st.error("❌ Please run pipeline.py first to generate data!")
     st.stop()
 
-# Sidebar with key metrics
 st.sidebar.header("📊 Key Metrics")
 st.sidebar.metric("Total Revenue", f"${summary['total_revenue']:,.0f}")
 st.sidebar.metric("Compliance Rate", f"{summary['compliance_rate']:.1f}%")
 st.sidebar.metric("Ghost Trips Detected", f"{summary['ghost_trip_count']:,.0f}")
 st.sidebar.metric("Rain Elasticity", f"{summary['rain_elasticity']:.3f}")
 
-# Tabs
 tab1, tab2, tab3, tab4 = st.tabs([
     "🗺️ The Map", 
     "⚡ The Flow", 
@@ -44,7 +35,6 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "🌧️ The Weather"
 ])
 
-# TAB 1: THE MAP
 with tab1:
     st.header("Border Effect Analysis")
     st.markdown("**Hypothesis**: Passengers end trips just outside the zone to avoid toll")
@@ -63,7 +53,6 @@ with tab1:
     - Focus on zones with >20% increase
     """)
 
-# TAB 2: THE FLOW
 with tab2:
     st.header("Congestion Velocity Heatmaps")
     st.markdown("**Question**: Did the toll actually speed up traffic?")
@@ -89,7 +78,6 @@ with tab2:
     - Did congestion pricing improve flow?
     """)
 
-# TAB 3: THE ECONOMICS
 with tab3:
     st.header("Tip Crowding Out Effect")
     st.markdown("**Hypothesis**: Higher tolls reduce tips for drivers")
@@ -112,7 +100,6 @@ with tab3:
     if os.path.exists(img_volume):
         st.image(Image.open(img_volume), use_container_width=True)
 
-# TAB 4: THE WEATHER
 with tab4:
     st.header("Rain Elasticity of Demand")
     st.markdown("**Question**: How does weather affect taxi demand?")
@@ -137,6 +124,5 @@ with tab4:
         st.info(f"⚪ **INELASTIC**: Weak correlation ({elasticity:.3f})")
         st.markdown("Rain has minimal impact on demand")
 
-# Footer
 st.markdown("---")
 st.markdown("**Data Source**: NYC TLC Trip Record Data | **Analysis Period**: 2024-2025")

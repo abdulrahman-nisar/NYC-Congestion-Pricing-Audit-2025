@@ -1,6 +1,3 @@
-"""
-Simplified Data Loader - NO IMPUTATION
-"""
 import dask.dataframe as dd
 import os
 import glob
@@ -9,7 +6,6 @@ import pandas as pd
 
 
 def load_taxi_data(taxi_type='yellow', year=2025, month=None):
-    """Load taxi data using Dask"""
     if month:
         pattern = os.path.join(DATA_RAW, f'{taxi_type}_tripdata_{year}-{month:02d}.parquet')
     else:
@@ -37,9 +33,6 @@ def load_taxi_data(taxi_type='yellow', year=2025, month=None):
 
 
 def check_december_2025():
-    """
-    SIMPLIFIED: Just check and warn if missing
-    """
     dec_2025_yellow = glob.glob(os.path.join(DATA_RAW, 'yellow_tripdata_2025-12.parquet'))
     dec_2025_green = glob.glob(os.path.join(DATA_RAW, 'green_tripdata_2025-12.parquet'))
     
@@ -58,7 +51,6 @@ def check_december_2025():
 
 
 def load_all_data():
-    """Load all available data"""
     dfs = []
     
     # Load 2024 data

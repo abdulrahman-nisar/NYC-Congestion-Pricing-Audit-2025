@@ -1,6 +1,3 @@
-"""
-Ghost Trip Detection - SIMPLIFIED VERSION
-"""
 import dask.dataframe as dd
 import pandas as pd
 from src.config import (
@@ -15,7 +12,6 @@ import numpy as np
 
 
 def calculate_speed(ddf):
-    """Calculate average speed for each trip"""
     ddf['trip_duration_hours'] = (
         (ddf['dropoff_time'] - ddf['pickup_time']).dt.total_seconds() / 3600
     )
@@ -28,9 +24,6 @@ def calculate_speed(ddf):
 
 
 def detect_ghost_trips(ddf):
-    """
-    Detect and filter ghost trips - SIMPLIFIED
-    """
     print("\n🔍 Detecting ghost trips...")
     
     # Calculate speed
@@ -44,39 +37,31 @@ def detect_ghost_trips(ddf):
     # Define ghost trip rules
     print("   Applying ghost trip rules...")
     
-    # Rule 1: Impossible Speed
     is_impossible_speed = ddf['speed_mph'] > MAX_SPEED_MPH
     
-    # Rule 2: Teleporter
     is_teleporter = (
         (ddf['trip_duration_minutes'] < MIN_TELEPORT_TIME_MINUTES) & 
         (ddf['fare'] > MIN_TELEPORT_FARE)
     )
     
-    # Rule 3: Stationary
     is_stationary = (ddf['trip_distance'] == 0) & (ddf['fare'] > MIN_STATIONARY_FARE)
     
-    # Combine rules
     is_ghost = is_impossible_speed | is_teleporter | is_stationary
     
-    # Create ghost reason using nested where (simpler approach)
     ddf['ghost_reason'] = 'Clean'
     ddf['ghost_reason'] = ddf['ghost_reason'].where(~is_stationary, 'Stationary Ride')
     ddf['ghost_reason'] = ddf['ghost_reason'].where(~is_teleporter, 'Teleporter')
     ddf['ghost_reason'] = ddf['ghost_reason'].where(~is_impossible_speed, 'Impossible Speed')
     
-    # Split into clean and ghost data
     clean_ddf = ddf[~is_ghost]
     ghost_ddf = ddf[is_ghost]
     
-    # Compute statistics
     print("   Computing statistics...")
     ghost_count = is_ghost.sum().compute()
     total_count = len(ddf)
     
     print(f"🚨 Found {ghost_count:,} ghost trips ({ghost_count/total_count*100:.2f}%)")
     
-    # Save ghost trips (sample if too large)
     print("💾 Saving ghost trips to audit log...")
     
     if ghost_count > 100000:
@@ -86,7 +71,6 @@ def detect_ghost_trips(ddf):
     else:
         ghost_trips = ghost_ddf.compute()
     
-    # Save to file
     os.makedirs(DATA_AUDIT, exist_ok=True)
     ghost_trips.to_parquet(
         os.path.join(DATA_AUDIT, 'ghost_trips.parquet'),
@@ -99,7 +83,6 @@ def detect_ghost_trips(ddf):
 
 
 def get_ghost_trip_summary(ghost_df):
-    """Generate summary statistics for ghost trips"""
     if ghost_df.empty:
         print("⚠️  No ghost trips found")
         return pd.DataFrame()

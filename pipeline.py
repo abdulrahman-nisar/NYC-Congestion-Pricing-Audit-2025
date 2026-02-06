@@ -1,7 +1,3 @@
-"""
-Main ETL and Analysis Pipeline
-NYC Congestion Pricing Audit 2025
-"""
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -30,15 +26,11 @@ import pandas as pd
 import os
 from src.config import OUTPUT_FIGURES, DATA_PROCESSED
 
-# Create output directories
 os.makedirs(OUTPUT_FIGURES, exist_ok=True)
 os.makedirs(DATA_PROCESSED, exist_ok=True)
 
 
 def main():
-    """
-    Execute full pipeline
-    """
     print("=" * 60)
     print("🚖 NYC CONGESTION PRICING AUDIT 2025")
     print("=" * 60)
@@ -48,31 +40,24 @@ def main():
     print("PHASE 1: BIG DATA ENGINEERING")
     print("="*60)
     
-    # Check December 2025 data
     check_december_2025()
     
-    # Load all data (lazy loading with Dask)
     print("\n📥 Loading taxi trip data...")
     ddf = load_all_data()
     
-    # Ghost trip detection
     clean_ddf, ghost_df = detect_ghost_trips(ddf)
     
-    # Ghost trip summary
     if not ghost_df.empty:
         print("\n📊 Ghost Trip Summary:")
         print(get_ghost_trip_summary(ghost_df))
     
-    # PHASE 2: CONGESTION ZONE IMPACT
     print("\n" + "="*60)
     print("PHASE 2: CONGESTION ZONE IMPACT ANALYSIS")
     print("="*60)
     
-    # Identify zone trips
     print("\n🗺️  Identifying congestion zone trips...")
     clean_ddf = identify_zone_trips(clean_ddf)
     
-    # Compliance rate
     print("\n📋 Calculating surcharge compliance...")
     compliance_rate, top_leakage = calculate_compliance_rate(clean_ddf)
     print(f"Compliance Rate: {compliance_rate:.2f}%")
@@ -80,49 +65,40 @@ def main():
         print("\nTop 3 Pickup Locations with Missing Surcharges:")
         print(top_leakage)
     
-    # Trip volume change
     print("\n📉 Analyzing trip volume changes (Q1 2024 vs Q1 2025)...")
     volume_df = calculate_trip_volume_change(clean_ddf)
     print(volume_df)
     
-    # Border effect
     print("\n🚧 Analyzing border effect...")
     border_comparison = analyze_border_effect(clean_ddf)
     
-    # PHASE 3: VISUAL AUDIT
     print("\n" + "="*60)
     print("PHASE 3: VISUAL AUDIT")
     print("="*60)
     
     print("\n📊 Generating visualizations...")
     
-    # Plot 1: Border Effect
     if not border_comparison.empty:
         plot_border_effect(border_comparison)
     
-    # Plot 2: Speed Heatmaps
     print("\n⏱️  Calculating average speeds...")
     speed_pivot = calculate_average_speed_by_time(clean_ddf)
     plot_speed_heatmap(speed_pivot)
     
-    # Plot 3: Tip vs Surcharge
     print("\n💰 Analyzing tip crowding out effect...")
     monthly_stats = calculate_tip_vs_surcharge(clean_ddf)
     plot_tip_vs_surcharge(monthly_stats)
     
-    # Plot 4: Trip Volume
     plot_trip_volume_change(volume_df)
     
-    # PHASE 4: RAIN TAX
     print("\n" + "="*60)
     print("PHASE 4: RAIN TAX ANALYSIS")
     print("="*60)
     
-    # Fetch weather data
     weather_df = fetch_weather_data()
     
     if weather_df is not None:
-        # Calculate rain elasticity
+
         print("\n��️  Calculating rain elasticity...")
         correlation, wettest_data = calculate_rain_elasticity(clean_ddf, weather_df)
         
@@ -138,11 +114,9 @@ def main():
             
             print(f"Interpretation: {elasticity}")
             
-            # Plot rain elasticity
             if wettest_data is not None and not wettest_data.empty:
                 plot_rain_elasticity(wettest_data)
     
-    # PHASE 5: REVENUE CALCULATION
     print("\n" + "="*60)
     print("PHASE 5: REVENUE ANALYSIS")
     print("="*60)
@@ -152,7 +126,6 @@ def main():
     print(f"Total Revenue: ${revenue_stats['total_revenue']:,.2f}")
     print(f"Average Surcharge per Trip: ${revenue_stats['avg_surcharge']:.2f}")
     
-    # Save summary statistics
     print("\n💾 Saving summary statistics...")
     summary_stats = {
         'total_revenue': revenue_stats['total_revenue'],

@@ -1,22 +1,14 @@
-"""
-Visualization functions - FIXED
-"""
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
 from src.config import OUTPUT_FIGURES
 import os
-
-# Set style
 sns.set_theme(style="whitegrid")
 plt.rcParams['figure.figsize'] = (12, 6)
 
 
 def plot_border_effect(border_comparison):
-    """
-    Plot % change in dropoffs at border zones
-    """
     if border_comparison.empty:
         print("⚠️  No border data to plot")
         return
@@ -41,9 +33,6 @@ def plot_border_effect(border_comparison):
 
 
 def plot_speed_heatmap(speed_pivot):
-    """
-    Plot velocity heatmap for 2024 and 2025
-    """
     if speed_pivot.empty:
         print("⚠️  No speed data to plot")
         return
@@ -83,9 +72,6 @@ def plot_speed_heatmap(speed_pivot):
 
 
 def plot_tip_vs_surcharge(monthly_stats):
-    """
-    Dual-axis chart: Surcharge vs Tip Percentage
-    """
     if monthly_stats.empty:
         print("⚠️  No tip/surcharge data to plot")
         return
@@ -95,7 +81,6 @@ def plot_tip_vs_surcharge(monthly_stats):
     x = range(len(monthly_stats))
     labels = [str(idx) for idx in monthly_stats.index]
     
-    # Bar chart: Average surcharge
     ax1.bar(x, monthly_stats['congestion_surcharge'], color='steelblue', alpha=0.7, label='Avg Surcharge ($)')
     ax1.set_xlabel('Month')
     ax1.set_ylabel('Average Surcharge ($)', color='steelblue')
@@ -103,7 +88,6 @@ def plot_tip_vs_surcharge(monthly_stats):
     ax1.set_xticks(x)
     ax1.set_xticklabels(labels, rotation=45)
     
-    # Line chart: Tip percentage
     ax2 = ax1.twinx()
     ax2.plot(x, monthly_stats['tip_pct'], color='darkred', marker='o', linewidth=2, label='Avg Tip %')
     ax2.set_ylabel('Average Tip (%)', color='darkred')
@@ -117,9 +101,6 @@ def plot_tip_vs_surcharge(monthly_stats):
 
 
 def plot_rain_elasticity(wettest_data):
-    """
-    Scatter plot: Daily trips vs precipitation
-    """
     if wettest_data is None or wettest_data.empty:
         print("⚠️  No weather data to plot")
         return
@@ -129,7 +110,6 @@ def plot_rain_elasticity(wettest_data):
     ax.scatter(wettest_data['precipitation_mm'], wettest_data['trip_count'], 
                alpha=0.6, s=50, color='navy')
     
-    # Add trend line
     z = np.polyfit(wettest_data['precipitation_mm'], wettest_data['trip_count'], 1)
     p = np.poly1d(z)
     ax.plot(wettest_data['precipitation_mm'], 
@@ -150,9 +130,6 @@ def plot_rain_elasticity(wettest_data):
 
 
 def plot_trip_volume_change(volume_df):
-    """
-    Bar chart comparing Q1 trip volumes - FIXED
-    """
     # FIX: Check if DataFrame is valid
     if volume_df is None or volume_df.empty:
         print("⚠️  No volume data to plot")
@@ -173,7 +150,6 @@ def plot_trip_volume_change(volume_df):
             print("⚠️  No 2024 or 2025 data in volume_df")
             return
         
-        # Plot available years
         if has_2024 and has_2025:
             volume_df[[2024, 2025]].plot(kind='bar', ax=ax, color=['#1f77b4', '#ff7f0e'])
             legend_labels = ['2024', '2025']
@@ -191,7 +167,6 @@ def plot_trip_volume_change(volume_df):
         ax.set_xticklabels(volume_df.index, rotation=0)
         ax.legend(legend_labels)
         
-        # Add percentage change annotations if available
         if 'pct_change' in volume_df.columns and has_2024 and has_2025:
             for i, (idx, row) in enumerate(volume_df.iterrows()):
                 max_val = max(row[2024], row[2025])
