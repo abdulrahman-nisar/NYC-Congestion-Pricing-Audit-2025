@@ -167,20 +167,3 @@ BSE-6A | Roll: 23F-3048
 ## Data Source
 NYC Taxi & Limousine Commission (TLC) Trip Record Data
 Analysis Period: January 2024 - December 2025
-
-**Expected Metrics:**
-- Total 2025 Surcharge Revenue: ~$XXX million
-- Compliance Rate: ~XX%
-- Rain Elasticity: 0.XX (elastic/inelastic)
-- Ghost Trips: ~X% of total
-
----
-
-## 👤 Author
-**Your Name**
-- Data Science Assignment
-- January 2026
-
-## 📄 License
-MIT License
-```
